@@ -29,6 +29,7 @@ public class InputListener : MonoBehaviour
 
     private void Update()
     {
+        if (_actions == null || _playerMovement == null) return;
         var dir = _actions.Player.Move.ReadValue<Vector2>();
         _playerMovement.Move(dir);
     }
