@@ -14,9 +14,9 @@ namespace Core
         [SerializeField] private EnemyFactory enemyFactory;
         [SerializeField] private EnemyStepper enemyStepper;
 
-       // [Header("Score")]
-        //[SerializeField] private ScoreService scoreService;
-        //[SerializeField] private ScoreView scoreView;
+        [Header("Score")]
+        [SerializeField] private ScoreService scoreService;
+        [SerializeField] private ScoreView scoreView;
 
         [Header("Infrastructure")]
         [SerializeField] private CoroutineRunner coroutineRunner;
@@ -28,7 +28,7 @@ namespace Core
         {
             SetupPlayer();
             SetupInput();
-            //SetupScore();
+            SetupScore();
             SetupEnemies();
         }
 
@@ -45,12 +45,10 @@ namespace Core
             _inputListener.Initialize(_playerMovement, playerShooter);
         }
 
-        /*private void SetupScore()
+        private void SetupScore()
         {
             scoreView.Initialize(scoreService);
-            enemyFactory.Enemies.ForEach(e => e.Died += OnEnemyDied);
-        
-        }*/
+        }
 
         private void SetupEnemies()
         {
@@ -58,11 +56,6 @@ namespace Core
             
             for (int i = 0; i < 5; i++)
                 enemyFactory.CreateEnemy(new Vector2(i - 2, 3)); //TODO
-        }
-
-        private void OnEnemyDied(ShootingSystem.DamageableEntity entity)
-        {
-            //scoreService.Add(1);
         }
 
         private void OnPlayerDied(ShootingSystem.DamageableEntity entity)
