@@ -1,52 +1,43 @@
+using PlayerSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputListener : MonoBehaviour
 {
-    [SerializeField] private PlayerMovement playerMovement;
-    [SerializeField] private Shooter playerShooter;
-    private InputSystem_Actions _inputSystemActions;
-    
-    private void Awake()
-    {
-        _inputSystemActions = new InputSystem_Actions();
-    }
+    private PlayerMovement _playerMovement;
+    private Shooter _shooter;
+    private InputSystem_Actions _actions;
 
-    private void OnEnable()
+    public void Initialize(PlayerMovement movement, Shooter shooter)
     {
+        _playerMovement = movement;
+        _shooter = shooter;
+        _actions = new InputSystem_Actions();
         Bind();
-        _inputSystemActions.Enable();
+        _actions.Enable();
     }
 
     private void Bind()
     {
-        _inputSystemActions.Player.Shoot.performed += OnShoot;
+        _actions.Player.Shoot.performed += OnShoot;
     }
 
-    private void FixedUpdate()
+    private void Unbind()
     {
-        Move();
+        _actions.Player.Shoot.performed -= OnShoot;
     }
 
-    private void Move()
+    private void Update()
     {
-        Vector2 direction = _inputSystemActions.Player.Move.ReadValue<Vector2>();
-        playerMovement.Move(direction); 
+        var dir = _actions.Player.Move.ReadValue<Vector2>();
+        _playerMovement.Move(dir);
     }
 
-    private void OnShoot(InputAction.CallbackContext obj)
-    {
-        playerShooter.Shoot();
-    }
+    private void OnShoot(InputAction.CallbackContext ctx) => _shooter.Shoot();
 
-    private void Expose()
+    private void OnDestroy()
     {
-        _inputSystemActions.Player.Shoot.performed -= OnShoot;
-    }
-
-    private void OnDisable()
-    {
-        _inputSystemActions.Disable();
-        Expose();
+        Unbind();
+        _actions?.Disable();
     }
 }

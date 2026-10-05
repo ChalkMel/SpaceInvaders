@@ -3,30 +3,32 @@ using UnityEngine;
 
 namespace PlayerSystem
 {
-  public class Player : IDamagable
+  public class Player : DamageableEntity
   {
-    private int _health;
-    private int _maxHealth;
-    private bool _isAlive;
+    [SerializeField] private float speed;
 
-    int IDamagable.Health
+    private Rigidbody2D _rb;
+    private PlayerMovement _playerMovement;
+    private Shooter _shooter;
+
+    protected override void Awake()
     {
-      get => _health;
-      set => _health = value;
+      base.Awake();
+      _rb = GetComponent<Rigidbody2D>();
+      _shooter = GetComponent<Shooter>();
     }
 
-    int IDamagable.MaxHealth
+    public void Initialize(PlayerMovement playerMovement)
     {
-      get => _maxHealth;
-      set => _maxHealth = value;
+      _playerMovement = playerMovement;
+      _playerMovement.Init(speed, _rb);
     }
 
-    bool IDamagable.IsAlive
+    public void Shoot() => _shooter?.Shoot();
+
+    protected override void OnDeath()
     {
-      get => _isAlive;
-      set => _isAlive = value;
+      Debug.Log("Game Over");
     }
-    
-    private 
   }
 }

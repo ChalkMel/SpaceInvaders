@@ -13,14 +13,14 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject, bulletLifeTime);
     }
 
-    public void ShootBullet(Vector3 firePoint)
+    public void ShootBullet(Vector2 direction)
     {
-        _rb.AddForce(firePoint * bulletSpeed, ForceMode2D.Impulse);
+        _rb.AddForce(direction * bulletSpeed, ForceMode2D.Impulse);
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        collision.gameObject.TryGetComponent<IDamagable>(out var target);
-        target.TakeDamage(1); //TODO
+        if (other.gameObject.TryGetComponent<IDamageable>(out var target))
+            target.TakeDamage(1); //TODO
         Destroy(gameObject);
     }
 }

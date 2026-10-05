@@ -1,16 +1,18 @@
+using PlayerSystem;
 using UnityEngine;
 
 public class Bootstrapper : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    private InputListener _inputListener;
+    [SerializeField]private Player _player;
+    private PlayerMovement _playerMovement;
+    [SerializeField] private Shooter playerShooter;
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        _playerMovement = _player.gameObject.AddComponent<PlayerMovement>();
+        _player.Initialize(_playerMovement);
+        _inputListener = gameObject.AddComponent<InputListener>();
+        _inputListener.Initialize(_playerMovement, playerShooter);
     }
 }
