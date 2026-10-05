@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class InputListener : MonoBehaviour
 {
     [SerializeField] private PlayerMovement playerMovement;
+    [SerializeField] private Shooter playerShooter;
     private InputSystem_Actions _inputSystemActions;
     
     private void Awake()
@@ -35,7 +36,7 @@ public class InputListener : MonoBehaviour
 
     private void OnShoot(InputAction.CallbackContext obj)
     {
-        //playerMovement.Jump();
+        playerShooter.Shoot();
     }
 
     private void Expose()
