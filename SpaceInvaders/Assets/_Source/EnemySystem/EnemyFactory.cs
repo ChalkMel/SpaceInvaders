@@ -7,28 +7,47 @@ namespace EnemySystem
 {
   public class EnemyFactory : MonoBehaviour
   {
-    [SerializeField] private Enemy enemyPrefab;
+    [Header("Layout")]
+    [Tooltip("Индекс 0 — верхний ряд. Каждый элемент — тип врага в ряду.")]
+    [SerializeField] private List<EnemyData> rows = new();
     [SerializeField] private Transform spawnRoot;
-    [SerializeField] private int scorePerKill = 1;
+
     [SerializeField] private ScoreService scoreService;
-    [SerializeField] private EnemyStepper enemyStepper;
+
     public List<Enemy> Enemies { get; } = new List<Enemy>();
     public event Action AllEnemiesDead;
-    
-    
+
     public Vector2 GridOrigin { get; private set; }
     public float SpacingX { get; private set; }
     public float SpacingY { get; private set; }
 
-    public Enemy CreateEnemy(Vector2 position, int column = -1, int row = -1)
+    public void CreateGrid(int columns, float spacingX, float spacingY, Vector2 origin)
     {
-      var enemy = Instantiate(enemyPrefab, position, Quaternion.identity, spawnRoot);
-      if (column >= 0 && row >= 0)
-        enemy.SetGridPosition(column, row);
+      GridOrigin = origin;
+      SpacingX = spacingX;
+      SpacingY = spacingY;
+
+      for (int r = 0; r < rows.Count; r++)
+      {
+        var data = rows[r];
+        if (data == null) continue;
+
+        for (int c = 0; c < columns; c++)
+        {
+          var pos = origin + new Vector2(c * spacingX, -r * spacingY);
+          CreateEnemy(data, pos, c, r);
+        }
+      }
+    }
+
+    public Enemy CreateEnemy(EnemyData data, Vector2 position, int column, int row)
+    {
+      var enemy = Instantiate(data.Prefab, position, Quaternion.identity, spawnRoot);
+      enemy.SetGridPosition(column, row);
+      enemy.SetScore(data.Score);
 
       Enemies.Add(enemy);
       enemy.Died += OnEnemyDied;
-      
       return enemy;
     }
 
@@ -36,23 +55,11 @@ namespace EnemySystem
     {
       if (entity is Enemy enemy)
       {
-        scoreService.Add(scorePerKill);
+        scoreService.Add(enemy.Score);
         enemy.Died -= OnEnemyDied;
         Enemies.Remove(enemy);
-
         if (Enemies.Count == 0) AllEnemiesDead?.Invoke();
       }
-    }
-
-    public void CreateGrid(int rows, int cols, float spacingX, float spacingY, Vector2 origin)
-    {
-      GridOrigin = origin;
-      SpacingX = spacingX;
-      SpacingY = spacingY;
-
-      for (int r = 0; r < rows; r++)
-      for (int c = 0; c < cols; c++)
-        CreateEnemy(origin + new Vector2(c * spacingX, -r * spacingY), c, r);
     }
   }
 }
