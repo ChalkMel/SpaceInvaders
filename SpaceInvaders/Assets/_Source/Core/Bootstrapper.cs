@@ -1,6 +1,7 @@
 using PlayerSystem;
 using UnityEngine;
 using EnemySystem;
+using Core;
 
 namespace Core
 {
@@ -16,23 +17,24 @@ namespace Core
         [SerializeField] private EnemyStepper enemyStepper;
         [SerializeField] private float enemyOffset;
         [SerializeField] private int enemyCount;
-
+        
         [Header("Score")]
         [SerializeField] private ScoreService scoreService;
         [SerializeField] private ScoreView scoreView;
 
-        [Header("Infrastructure")]
+        [Header("Architecture")]
         [SerializeField] private CoroutineRunner coroutineRunner;
+        [SerializeField] private GameManager gameManager;
 
         private InputListener _inputListener;
-        private PlayerMovement _playerMovement;
 
         private void Awake()
         {
-            SetupPlayer();
-            SetupInput();
             SetupScore();
+            SetupGameManager();
+            SetupPlayer();
             SetupEnemies();
+            SetupInput();
         }
 
         private void SetupPlayer()
@@ -42,16 +44,7 @@ namespace Core
             player.HealthChanged += healthView.SetHealth;
         }
 
-        private void SetupInput()
-        {
-            _inputListener = gameObject.AddComponent<InputListener>();
-            _inputListener.Initialize(player.GetPlayerMovement(), playerShooter);
-        }
-
-        private void SetupScore()
-        {
-            scoreView.Initialize(scoreService);
-        }
+        private void SetupScore() => scoreView.Initialize(scoreService);
 
         private void SetupEnemies()
         {
@@ -59,6 +52,17 @@ namespace Core
             
             for (int i = 0; i < enemyCount; i++)
                 enemyFactory.CreateEnemy(new Vector2(i - 2, 3)); //TODO
+        }
+
+        private void SetupInput()
+        {
+            _inputListener = gameObject.AddComponent<InputListener>();
+            _inputListener.Initialize(player.GetPlayerMovement(), playerShooter, gameManager);
+        }
+
+        private void SetupGameManager()
+        {
+            
         }
 
         private void OnDestroy()
