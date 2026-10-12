@@ -4,8 +4,6 @@ using UnityEngine;
 public class Enemy : DamageableEntity
 {
   private Shooter _shooter;
-
-  public Vector2 Position => transform.position;
   public int Column { get; private set; }
   public int Row { get; private set; }
   public int Score { get; private set; }

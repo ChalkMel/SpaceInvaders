@@ -6,7 +6,6 @@ namespace EnemySystem
   public class EnemyStepper : MonoBehaviour
   {
     [Header("Movement")]
-    [SerializeField] private float horizontalSpeed = 1.5f;
     [SerializeField] private float stepDown = 0.5f;
     [SerializeField] private float edgePadding = 0.5f;
     [SerializeField] private float pauseAtEdge = 0.15f;
@@ -16,15 +15,15 @@ namespace EnemySystem
     [Header("Bounds")]
     [SerializeField] private Transform leftLimit;
     [SerializeField] private Transform rightLimit;
-
-    [Header("Snake wave")]
-    [SerializeField] private bool useSnakeWave = true;
+    
     [SerializeField] private float waveAmplitude = 0.12f;
     [SerializeField] private float waveFrequency = 2.5f;
     [SerializeField] private float waveColumnPhase = 0.7f;
     [SerializeField] private float waveRowPhase = 0f;
     
-    private EnemyFactory _factory;
+    private EnemyRegistry _registry;
+    private EnemySpawner _spawner;
+
     private CoroutineRunner _runner;
     private Coroutine _loop;
 
@@ -33,31 +32,31 @@ namespace EnemySystem
     private float _minWorldX, _maxWorldX;
     private float _time;
 
-    public void Initialize(EnemyFactory factory, CoroutineRunner runner)
+    public void Initialize(CoroutineRunner runner, EnemyRegistry registry, EnemySpawner spawner)
     {
-      _factory = factory;
       _runner = runner;
-      _formationPos = factory.GridOrigin;
+      _registry = registry;
+      _spawner = spawner;
+      _formationPos = spawner.GridOrigin;
       CacheBounds();
       _loop = _runner.StartCoroutine(Loop());
     }
 
     private void CacheBounds()
     {
-      float minX, maxX;
+      if (Camera.main != null)
+      {
+        float minX = leftLimit != null
+          ? leftLimit.position.x + edgePadding
+          : Camera.main.ViewportToWorldPoint(new Vector3(0, 0.5f, 0)).x + edgePadding;
 
-      if (leftLimit != null)
-        minX = leftLimit.position.x + edgePadding;
-      else
-        minX = Camera.main.ViewportToWorldPoint(new Vector3(0, 0.5f, 0)).x + edgePadding;
+        float maxX = rightLimit != null
+          ? rightLimit.position.x - edgePadding
+          : Camera.main.ViewportToWorldPoint(new Vector3(1, 0.5f, 0)).x - edgePadding;
 
-      if (rightLimit != null)
-        maxX = rightLimit.position.x - edgePadding;
-      else
-        maxX = Camera.main.ViewportToWorldPoint(new Vector3(1, 0.5f, 0)).x - edgePadding;
-
-      _minWorldX = minX;
-      _maxWorldX = maxX;
+        _minWorldX = minX;
+        _maxWorldX = maxX;
+      }
     }
 
     private IEnumerator Loop()
@@ -65,7 +64,7 @@ namespace EnemySystem
       while (true)
       {
         yield return null;
-        if (_factory.Enemies.Count == 0) continue;
+        if (_registry.AliveCount == 0) continue;
 
         _time += Time.deltaTime;
 
@@ -90,14 +89,11 @@ namespace EnemySystem
 
     private float ComputeSpeedMultiplier()
     {
-      int initial = _factory.InitialCount;
+      int initial = _registry.InitialCount;
       if (initial <= 0) return 1f;
 
-      int alive = _factory.Enemies.Count;
-      float aliveRatio = alive / (float)initial;
-      float deadRatio  = 1f - aliveRatio;
-
-      return Mathf.Lerp(1f, maxSpeedMultiplier, deadRatio);
+      float aliveRatio = _registry.AliveCount / (float)initial;
+      return Mathf.Lerp(1f, maxSpeedMultiplier, 1f - aliveRatio);
     }
 
     private bool WouldHitEdge(float dx)
@@ -106,15 +102,17 @@ namespace EnemySystem
       float leftLocalX = float.MaxValue;
       float rightLocalX = float.MinValue;
 
-      foreach (var e in _factory.Enemies)
+      var enemies = _registry.Enemies;
+      for (int i = 0; i < enemies.Count; i++)
       {
+        var e = enemies[i];
         if (e == null) continue;
-        float localX = e.Column * _factory.SpacingX;
+        float localX = e.Column * _spawner.SpacingX;
         if (localX < leftLocalX) leftLocalX = localX;
         if (localX > rightLocalX) rightLocalX = localX;
       }
 
-      if (leftLocalX == float.MaxValue) return false;
+      if (Mathf.Approximately(leftLocalX, float.MaxValue)) return false;
 
       return nextFormationX + leftLocalX <= _minWorldX
           || nextFormationX + rightLocalX >= _maxWorldX;
@@ -122,26 +120,23 @@ namespace EnemySystem
 
     private void RepositionEnemies()
     {
-      foreach (var e in _factory.Enemies)
+      var enemies = _registry.Enemies;
+      for (int i = 0; i < enemies.Count; i++)
       {
+        var e = enemies[i];
         if (e == null) continue;
 
         Vector2 pos = _formationPos + new Vector2(
-          e.Column * _factory.SpacingX,
-          -e.Row * _factory.SpacingY);
+          e.Column * _spawner.SpacingX,
+          -e.Row * _spawner.SpacingY);
 
-        if (useSnakeWave)
-        {
-          float phase = _time * waveFrequency
-                      + e.Column * waveColumnPhase
-                      + e.Row * waveRowPhase;
+          float phase = _time * waveFrequency + 
+                        e.Column * waveColumnPhase + 
+                        e.Row * waveRowPhase;
           pos.y += Mathf.Sin(phase) * waveAmplitude;
-        }
 
         e.transform.position = pos;
       }
     }
-
-    private void OnDestroy() => _runner?.StopCoroutine(_loop);
   }
 }

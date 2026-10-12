@@ -12,7 +12,7 @@ namespace Core
   public class GameManager : MonoBehaviour
   {
     [SerializeField] private Player player;
-    [SerializeField] private EnemyFactory enemyFactory;
+    [SerializeField] private EnemyRegistry enemyRegistry;
 
     [SerializeField] private GameObject winPanel;
     [SerializeField] private TextMeshProUGUI winText;
@@ -26,17 +26,18 @@ namespace Core
     public void Initialize(ScoreService score)
     {
       _scoreService = score;
+      Time.timeScale = 1f;
     }
     private void OnEnable()
     {
       player.Died += OnPlayerDied;
-      enemyFactory.AllEnemiesDead += OnAllEnemiesDead;
+      enemyRegistry.AllDead += OnAllEnemiesDead;
     }
 
     private void OnDisable()
     {
       player.Died -= OnPlayerDied;
-      enemyFactory.AllEnemiesDead -= OnAllEnemiesDead;
+      enemyRegistry.AllDead -= OnAllEnemiesDead;
     }
 
     private void Start()

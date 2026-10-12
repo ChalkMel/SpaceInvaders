@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace EnemySystem
 {
-  [CreateAssetMenu(menuName = "SpaceInvaders/Enemy Data", fileName = "EnemyData")]
+  [CreateAssetMenu(menuName = "Enemy Data", fileName = "EnemyData")]
   public class EnemyData : ScriptableObject
   {
     [field:SerializeField] private Enemy prefab;

@@ -1,26 +1,35 @@
-using System;
 using ShootingSystem;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private Rigidbody2D _rb;
-    [SerializeField] private float bulletSpeed;
-    [SerializeField] private float bulletLifeTime;
-    private void Awake()
-    {
-        _rb = GetComponent<Rigidbody2D>();
-        Destroy(gameObject, bulletLifeTime);
-    }
+  [SerializeField] private float bulletSpeed;
+  [SerializeField] private float bulletLifeTime;
+  [SerializeField] private int damage = 1;
 
-    public void ShootBullet(Vector2 direction)
+  private Rigidbody2D _rb;
+  private Team _ownerTeam;
+
+  private void Awake()
+  {
+    _rb = GetComponent<Rigidbody2D>();
+    Destroy(gameObject, bulletLifeTime);
+  }
+
+  public void ShootBullet(Vector2 direction, Team ownerTeam)
+  {
+    _ownerTeam = ownerTeam;
+    _rb.AddForce(direction * bulletSpeed, ForceMode2D.Impulse);
+  }
+
+  private void OnCollisionEnter2D(Collision2D other)
+  {
+    if (other.gameObject.TryGetComponent<IDamageable>(out var damageable) &&
+        other.gameObject.TryGetComponent<ITeam>(out var teamOwner) &&
+        teamOwner.Team != _ownerTeam)
     {
-        _rb.AddForce(direction * bulletSpeed, ForceMode2D.Impulse);
+      damageable.TakeDamage(damage);
+      Destroy(gameObject);
     }
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.TryGetComponent<IDamageable>(out var target))
-            target.TakeDamage(1); //TODO
-        Destroy(gameObject);
-    }
+  }
 }

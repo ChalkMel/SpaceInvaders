@@ -6,19 +6,19 @@ namespace EnemySystem
 {
   public class EnemyShootingController : MonoBehaviour
   {
-    [SerializeField] private EnemyFactory factory;
-    [SerializeField] private CoroutineRunner runner;
+    private EnemyRegistry _registry;
+    private CoroutineRunner _runner;
     [SerializeField] private float minInterval = 1f;
     [SerializeField] private float maxInterval = 3f;
 
     private Coroutine _loop;
     private readonly List<Enemy> _canShoot = new();
 
-    public void Initialize(EnemyFactory f, CoroutineRunner r)
+    public void Initialize(CoroutineRunner runner, EnemyRegistry  registry)
     {
-      factory = f;
-      runner = r;
-      _loop = runner.StartCoroutine(Loop());
+      _runner = runner;
+      _registry = registry;
+      _loop = _runner.StartCoroutine(Loop());
     }
 
     private IEnumerator Loop()
@@ -28,15 +28,14 @@ namespace EnemySystem
         yield return new WaitForSeconds(Random.Range(minInterval, maxInterval));
 
         var shooter = PickRandomShooter();
-        if (shooter != null)
-          shooter.Shoot();
+        if (shooter != null) shooter.Shoot();
       }
     }
-    
+
     private Enemy PickRandomShooter()
     {
       _canShoot.Clear();
-      var enemies = factory.Enemies;
+      var enemies = _registry.Enemies;
 
       for (int i = 0; i < enemies.Count; i++)
       {
@@ -50,7 +49,7 @@ namespace EnemySystem
       return _canShoot[Random.Range(0, _canShoot.Count)];
     }
 
-    private static bool HasEnemyBelowInColumn(Enemy candidate, List<Enemy> enemies)
+    private static bool HasEnemyBelowInColumn(Enemy candidate, IReadOnlyList<Enemy> enemies)
     {
       for (int i = 0; i < enemies.Count; i++)
       {

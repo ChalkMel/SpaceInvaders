@@ -262,9 +262,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 57154569}
-  - component: {fileID: 57154568}
   - component: {fileID: 57154567}
   - component: {fileID: 57154570}
+  - component: {fileID: 57154573}
+  - component: {fileID: 57154572}
+  - component: {fileID: 57154571}
   m_Layer: 0
   m_Name: EnemySpawn
   m_TagString: Untagged
@@ -284,7 +286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4a34920f1654074a1b80d0ac43f291d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  horizontalSpeed: 0.3
   stepDown: 0.3
   edgePadding: 0.5
   pauseAtEdge: 0.15
@@ -292,30 +293,10 @@ MonoBehaviour:
   maxSpeedMultiplier: 3
   leftLimit: {fileID: 1254099047}
   rightLimit: {fileID: 740259799}
-  useSnakeWave: 1
   waveAmplitude: 0.04
   waveFrequency: 10
   waveColumnPhase: 4
   waveRowPhase: 1
---- !u!114 &57154568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 57154566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46f3c58be4c34ee7ae4f4c5d8abf60fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rows:
-  - {fileID: 11400000, guid: cb7464f51e0a4f7489c4c3626692f443, type: 2}
-  - {fileID: 11400000, guid: 516041c80fcfb4f44bab2b0a1fa08072, type: 2}
-  - {fileID: 11400000, guid: 516041c80fcfb4f44bab2b0a1fa08072, type: 2}
-  - {fileID: 11400000, guid: b6eea0f8e100fea43abdd23197218c49, type: 2}
-  - {fileID: 11400000, guid: b6eea0f8e100fea43abdd23197218c49, type: 2}
-  spawnRoot: {fileID: 800552287}
 --- !u!4 &57154569
 Transform:
   m_ObjectHideFlags: 0
@@ -343,10 +324,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e107cf717584f39b5e6ea069a281c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  factory: {fileID: 57154568}
-  runner: {fileID: 1846408605}
-  minInterval: 1
-  maxInterval: 3
+  minInterval: 0.5
+  maxInterval: 2
+--- !u!114 &57154571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57154566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94384bc1e39c47748cd4aa6f33c25863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &57154572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57154566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a41c6d03f85b438e9b727d9288b1bd6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &57154573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57154566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9ded95e209145c196d2a2261dfa773f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rows:
+  - {fileID: 11400000, guid: cb7464f51e0a4f7489c4c3626692f443, type: 2}
+  - {fileID: 11400000, guid: 516041c80fcfb4f44bab2b0a1fa08072, type: 2}
+  - {fileID: 11400000, guid: 516041c80fcfb4f44bab2b0a1fa08072, type: 2}
+  - {fileID: 11400000, guid: b6eea0f8e100fea43abdd23197218c49, type: 2}
+  - {fileID: 11400000, guid: b6eea0f8e100fea43abdd23197218c49, type: 2}
+  spawnRoot: {fileID: 800552287}
+  columns: 8
+  spacingX: 1
+  spacingY: 1
+  origin: {x: -4, y: 5}
 --- !u!1 &201164124
 GameObject:
   m_ObjectHideFlags: 0
@@ -842,11 +868,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1409402440}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 203.2, y: 69.8}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 326.26953, y: 191.92322}
+  m_SizeDelta: {x: -652.5389, y: -383.8464}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &650837278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1034,7 +1060,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1255760703}
-  enemyFactory: {fileID: 57154568}
+  enemyRegistry: {fileID: 57154572}
   winPanel: {fileID: 476297976}
   winText: {fileID: 2033971482}
   losePanel: {fileID: 495872073}
@@ -1875,6 +1901,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 3
+  team: 1
   speed: 3
 --- !u!1 &1409402436
 GameObject:
@@ -2308,14 +2335,11 @@ MonoBehaviour:
   player: {fileID: 1255760703}
   playerShooter: {fileID: 1255760702}
   healthView: {fileID: 650837279}
-  enemyFactory: {fileID: 57154568}
+  scoreHandler: {fileID: 57154571}
+  enemySpawner: {fileID: 57154573}
+  enemyRegistry: {fileID: 57154572}
   enemyStepper: {fileID: 57154567}
   enemyShooting: {fileID: 57154570}
-  rows: 5
-  cols: 7
-  spacingX: 1.2
-  spacingY: 1.2
-  origin: {x: -5, y: 6}
   scoreView: {fileID: 735243234}
   coroutineRunner: {fileID: 1846408605}
   gameManager: {fileID: 734348590}

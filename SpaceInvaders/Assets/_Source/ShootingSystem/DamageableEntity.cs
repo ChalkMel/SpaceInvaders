@@ -3,11 +3,13 @@ using UnityEngine;
 
 namespace ShootingSystem
 {
-  public abstract class DamageableEntity : MonoBehaviour, IDamageable
+  public abstract class DamageableEntity : MonoBehaviour, IDamageable, ITeam
   {
     [SerializeField] private int maxHealth;
+    [SerializeField] private Team team;
     private int _health;
 
+    public Team Team => team;
     public int Health => _health;
     public int MaxHealth => maxHealth;
     public bool IsAlive => _health > 0;
@@ -15,7 +17,10 @@ namespace ShootingSystem
     public event Action<DamageableEntity> Died;
     public event Action<int> HealthChanged;
 
-    protected virtual void Awake() => _health = maxHealth;
+    protected virtual void Awake()
+    {
+      _health = maxHealth;
+    }
 
     public void TakeDamage(int damage)
     {

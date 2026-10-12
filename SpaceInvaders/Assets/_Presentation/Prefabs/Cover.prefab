@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 4
+  team: 2
   spriteRenderer: {fileID: 1918701368205730880}
   stageSprites:
   - {fileID: 7099710728136048336, guid: 9428c60cab7e292449a968a1e78942f6, type: 3}

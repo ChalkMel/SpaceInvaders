@@ -14,14 +14,11 @@ namespace Core
         [SerializeField] private HealthView healthView;
 
         [Header("Enemies")]
-        [SerializeField] private EnemyFactory enemyFactory;
+        [SerializeField] private EnemyScoreHandler scoreHandler;
+        [SerializeField] private EnemySpawner enemySpawner;
+        [SerializeField] private EnemyRegistry enemyRegistry;
         [SerializeField] private EnemyStepper enemyStepper;
         [SerializeField] private EnemyShootingController enemyShooting;
-        [SerializeField] private int rows;
-        [SerializeField] private int cols;
-        [SerializeField] private float spacingX;
-        [SerializeField] private float spacingY;
-        [SerializeField] private Vector2 origin;
 
         [Header("Score")]
         private ScoreService _scoreService;
@@ -57,11 +54,11 @@ namespace Core
 
         private void SetupEnemies()
         {
-            enemyFactory.Init(_scoreService);
-            enemyFactory.CreateGrid(cols, spacingX, spacingY, origin);
-            enemyStepper.Initialize(enemyFactory, coroutineRunner);
-            enemyShooting.Initialize(enemyFactory, coroutineRunner);
-            
+            scoreHandler.Initialize(_scoreService, enemyRegistry);
+            enemySpawner.Initialize(enemyRegistry);
+            enemySpawner.CreateGrid();
+            enemyStepper.Initialize(coroutineRunner, enemyRegistry, enemySpawner);
+            enemyShooting.Initialize(coroutineRunner, enemyRegistry);
         }
 
         private void SetupInput()
