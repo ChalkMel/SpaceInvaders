@@ -7,7 +7,7 @@ namespace EnemySystem
   {
     [SerializeField] private Enemy enemyPrefab;
     [SerializeField] private Transform spawnRoot;
-    
+    [SerializeField] private int bulletSpeed;
     [SerializeField] ScoreService scoreService;
 
     public List<Enemy> Enemies { get; } = new List<Enemy>();

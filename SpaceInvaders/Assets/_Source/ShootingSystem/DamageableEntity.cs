@@ -13,6 +13,7 @@ namespace ShootingSystem
     public bool IsAlive => _health > 0;
 
     public event Action<DamageableEntity> Died;
+    public event Action<int> HealthChanged;
 
     protected virtual void Awake() => _health = maxHealth;
 
@@ -20,6 +21,7 @@ namespace ShootingSystem
     {
       if (!IsAlive) return;
       _health -= damage;
+      HealthChanged?.Invoke(_health);
       if (!IsAlive)
       {
         Died?.Invoke(this);

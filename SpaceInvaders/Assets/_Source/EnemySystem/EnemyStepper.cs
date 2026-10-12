@@ -38,7 +38,7 @@ namespace EnemySystem
       foreach (var enemy in _factory.Enemies)
       {
         float nextX = enemy.Position.x + stepRange.x * _direction;
-        if (Mathf.Abs(nextX) > 5f)
+        if (Mathf.Abs(nextX) > 8f)
         {
           needStepDown = true;
           break;

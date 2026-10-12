@@ -11,13 +11,15 @@ namespace PlayerSystem
     private PlayerMovement _playerMovement;
     private Shooter _shooter;
 
-    public void Initialize(PlayerMovement playerMovement)
+    public void Awake()
     {
+      base.Awake();
       _rb = GetComponent<Rigidbody2D>();
       _shooter = GetComponent<Shooter>();
-      _playerMovement = playerMovement;
-      _playerMovement.Init(speed, _rb);
+      _playerMovement = new PlayerMovement(speed, _rb);
     }
+    
+    public PlayerMovement GetPlayerMovement() => _playerMovement; 
 
     public void Shoot() => _shooter?.Shoot();
 
