@@ -11,7 +11,7 @@ namespace PlayerSystem
     private PlayerMovement _playerMovement;
     private Shooter _shooter;
 
-    public void Awake()
+    protected override void Awake()
     {
       base.Awake();
       _rb = GetComponent<Rigidbody2D>();

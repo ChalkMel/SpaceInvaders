@@ -1,7 +1,8 @@
 using PlayerSystem;
 using UnityEngine;
 using EnemySystem;
-using Core;
+using ScoreSystem;
+using ShootingSystem;
 
 namespace Core
 {
@@ -23,7 +24,7 @@ namespace Core
         [SerializeField] private Vector2 origin;
 
         [Header("Score")]
-        [SerializeField] private ScoreService scoreService;
+        private ScoreService _scoreService;
         [SerializeField] private ScoreView scoreView;
 
         [Header("Architecture")]
@@ -48,10 +49,15 @@ namespace Core
             player.HealthChanged += healthView.SetHealth;
         }
 
-        private void SetupScore() => scoreView.Initialize(scoreService);
+        private void SetupScore() 
+        {
+            _scoreService = new ScoreService();
+            scoreView.Initialize(_scoreService);
+        }
 
         private void SetupEnemies()
         {
+            enemyFactory.Init(_scoreService);
             enemyFactory.CreateGrid(cols, spacingX, spacingY, origin);
             enemyStepper.Initialize(enemyFactory, coroutineRunner);
             enemyShooting.Initialize(enemyFactory, coroutineRunner);
@@ -66,7 +72,7 @@ namespace Core
 
         private void SetupGameManager()
         {
-            gameManager.Initialize(scoreService);
+            gameManager.Initialize(_scoreService);
         }
 
         private void OnDestroy()

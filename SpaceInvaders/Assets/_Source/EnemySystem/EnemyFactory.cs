@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
+using ScoreSystem;
 using UnityEngine;
 using ShootingSystem;
 
 namespace EnemySystem
 {
-  public class EnemyFactory : MonoBehaviour
+  public class EnemyFactory: MonoBehaviour
   {
     [Header("Layout")]
-    [Tooltip("Индекс 0 — верхний ряд. Каждый элемент — тип врага в ряду.")]
     [SerializeField] private List<EnemyData> rows = new();
     [SerializeField] private Transform spawnRoot;
 
-    [SerializeField] private ScoreService scoreService;
+    private ScoreService _scoreService;
 
     public List<Enemy> Enemies { get; } = new List<Enemy>();
     public event Action AllEnemiesDead;
@@ -20,7 +20,14 @@ namespace EnemySystem
     public Vector2 GridOrigin { get; private set; }
     public float SpacingX { get; private set; }
     public float SpacingY { get; private set; }
+    
+    public int InitialCount { get; private set; }
 
+
+    public void Init(ScoreService scoreService)
+    {
+      _scoreService = scoreService;
+    }
     public void CreateGrid(int columns, float spacingX, float spacingY, Vector2 origin)
     {
       GridOrigin = origin;
@@ -38,6 +45,7 @@ namespace EnemySystem
           CreateEnemy(data, pos, c, r);
         }
       }
+      InitialCount = Enemies.Count;
     }
 
     public Enemy CreateEnemy(EnemyData data, Vector2 position, int column, int row)
@@ -55,7 +63,7 @@ namespace EnemySystem
     {
       if (entity is Enemy enemy)
       {
-        scoreService.Add(enemy.Score);
+        _scoreService.Add(enemy.Score);
         enemy.Died -= OnEnemyDied;
         Enemies.Remove(enemy);
         if (Enemies.Count == 0) AllEnemiesDead?.Invoke();

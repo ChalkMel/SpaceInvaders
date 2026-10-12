@@ -1,5 +1,6 @@
 using EnemySystem;
 using PlayerSystem;
+using ScoreSystem;
 using ShootingSystem;
 using TMPro;
 using UnityEngine;
@@ -53,13 +54,13 @@ namespace Core
     private void OnPlayerDied(DamageableEntity _) => TriggerLose();
     private void OnAllEnemiesDead() => TriggerWin();
 
-    public void TriggerWin()
+    private void TriggerWin()
     {
       if (!IsGameActive) return;
       IsGameActive = false;
       winPanel.SetActive(true);
       winText.text = $"You won! Your score is {_scoreService.Score}\nYou can try again with pressing R";
-      //Time.timeScale = 0f;
+      Time.timeScale = 0f;
     }
 
     public void TriggerLose()
@@ -68,7 +69,7 @@ namespace Core
       IsGameActive = false;
       losePanel.SetActive(true);
       loseText.text = $"You lost! Your score is {_scoreService.Score}\nYou can try again with pressing R";
-      //Time.timeScale = 0f;
+      Time.timeScale = 0f;
     }
 
     public void Restart() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

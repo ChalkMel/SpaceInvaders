@@ -1,3 +1,4 @@
+using ScoreSystem;
 using TMPro;
 using UnityEngine;
 

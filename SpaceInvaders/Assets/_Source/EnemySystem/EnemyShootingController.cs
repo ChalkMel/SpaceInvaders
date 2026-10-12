@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using EnemySystem;
 using UnityEngine;
 
 namespace EnemySystem
@@ -62,7 +61,5 @@ namespace EnemySystem
       }
       return false;
     }
-
-    private void OnDestroy() => runner?.StopCoroutine(_loop);
   }
 }

@@ -1,14 +1,17 @@
 using System;
 using UnityEngine;
 
-public class ScoreService : MonoBehaviour
+namespace ScoreSystem
 {
-  public int Score { get; private set; }
-  public event Action<int> OnScoreChanged;
-
-  public void Add(int value)
+  public class ScoreService
   {
-    Score += value;
-    OnScoreChanged?.Invoke(Score);
+    public int Score { get; private set; }
+    public event Action<int> OnScoreChanged;
+
+    public void Add(int value)
+    {
+      Score += value;
+      OnScoreChanged?.Invoke(Score);
+    }
   }
 }

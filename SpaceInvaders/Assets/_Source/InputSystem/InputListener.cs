@@ -1,5 +1,6 @@
 using Core;
 using PlayerSystem;
+using ShootingSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

@@ -10,6 +10,12 @@ namespace EnemySystem
     [SerializeField] private float stepDown = 0.5f;
     [SerializeField] private float edgePadding = 0.5f;
     [SerializeField] private float pauseAtEdge = 0.15f;
+    [SerializeField] private float baseSpeed = 1.0f;
+    [SerializeField] private float maxSpeedMultiplier = 3.0f;
+
+    [Header("Bounds")]
+    [SerializeField] private Transform leftLimit;
+    [SerializeField] private Transform rightLimit;
 
     [Header("Snake wave")]
     [SerializeField] private bool useSnakeWave = true;
@@ -17,12 +23,12 @@ namespace EnemySystem
     [SerializeField] private float waveFrequency = 2.5f;
     [SerializeField] private float waveColumnPhase = 0.7f;
     [SerializeField] private float waveRowPhase = 0f;
-
+    
     private EnemyFactory _factory;
     private CoroutineRunner _runner;
     private Coroutine _loop;
 
-    private Vector2 _formationPos;   // мировая позиция ячейки (Column=0, Row=0)
+    private Vector2 _formationPos;
     private int _direction = 1;
     private float _minWorldX, _maxWorldX;
     private float _time;
@@ -38,10 +44,20 @@ namespace EnemySystem
 
     private void CacheBounds()
     {
-      var cam = Camera.main;
-      if (cam == null) { _minWorldX = -8f; _maxWorldX = 8f; return; }
-      _minWorldX = cam.ViewportToWorldPoint(new Vector3(0, 0.5f, 0)).x + edgePadding;
-      _maxWorldX = cam.ViewportToWorldPoint(new Vector3(1, 0.5f, 0)).x - edgePadding;
+      float minX, maxX;
+
+      if (leftLimit != null)
+        minX = leftLimit.position.x + edgePadding;
+      else
+        minX = Camera.main.ViewportToWorldPoint(new Vector3(0, 0.5f, 0)).x + edgePadding;
+
+      if (rightLimit != null)
+        maxX = rightLimit.position.x - edgePadding;
+      else
+        maxX = Camera.main.ViewportToWorldPoint(new Vector3(1, 0.5f, 0)).x - edgePadding;
+
+      _minWorldX = minX;
+      _maxWorldX = maxX;
     }
 
     private IEnumerator Loop()
@@ -52,7 +68,9 @@ namespace EnemySystem
         if (_factory.Enemies.Count == 0) continue;
 
         _time += Time.deltaTime;
-        float dx = _direction * horizontalSpeed * Time.deltaTime;
+
+        float speedMul = ComputeSpeedMultiplier();
+        float dx = _direction * baseSpeed * speedMul * Time.deltaTime;
 
         if (WouldHitEdge(dx))
         {
@@ -70,6 +88,18 @@ namespace EnemySystem
       }
     }
 
+    private float ComputeSpeedMultiplier()
+    {
+      int initial = _factory.InitialCount;
+      if (initial <= 0) return 1f;
+
+      int alive = _factory.Enemies.Count;
+      float aliveRatio = alive / (float)initial;
+      float deadRatio  = 1f - aliveRatio;
+
+      return Mathf.Lerp(1f, maxSpeedMultiplier, deadRatio);
+    }
+
     private bool WouldHitEdge(float dx)
     {
       float nextFormationX = _formationPos.x + dx;
@@ -84,7 +114,7 @@ namespace EnemySystem
         if (localX > rightLocalX) rightLocalX = localX;
       }
 
-      if (leftLocalX == float.MaxValue) return false; // нет мобов
+      if (leftLocalX == float.MaxValue) return false;
 
       return nextFormationX + leftLocalX <= _minWorldX
           || nextFormationX + rightLocalX >= _maxWorldX;
