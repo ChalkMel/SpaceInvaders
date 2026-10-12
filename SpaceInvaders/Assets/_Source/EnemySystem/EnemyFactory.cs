@@ -11,19 +11,14 @@ namespace EnemySystem
     [SerializeField] private Transform spawnRoot;
     [SerializeField] private int scorePerKill = 1;
     [SerializeField] private ScoreService scoreService;
-
+    [SerializeField] private EnemyStepper enemyStepper;
     public List<Enemy> Enemies { get; } = new List<Enemy>();
     public event Action AllEnemiesDead;
-
-    public void CreateGrid(int rows, int cols, float spacingX, float spacingY, Vector2 origin)
-    {
-      for (int r = 0; r < rows; r++)
-      for (int c = 0; c < cols; c++)
-      {
-        var pos = origin + new Vector2(c * spacingX, -r * spacingY);
-        CreateEnemy(pos, c, r);
-      }
-    }
+    
+    
+    public Vector2 GridOrigin { get; private set; }
+    public float SpacingX { get; private set; }
+    public float SpacingY { get; private set; }
 
     public Enemy CreateEnemy(Vector2 position, int column = -1, int row = -1)
     {
@@ -33,6 +28,7 @@ namespace EnemySystem
 
       Enemies.Add(enemy);
       enemy.Died += OnEnemyDied;
+      
       return enemy;
     }
 
@@ -43,8 +39,20 @@ namespace EnemySystem
         scoreService.Add(scorePerKill);
         enemy.Died -= OnEnemyDied;
         Enemies.Remove(enemy);
+
         if (Enemies.Count == 0) AllEnemiesDead?.Invoke();
       }
+    }
+
+    public void CreateGrid(int rows, int cols, float spacingX, float spacingY, Vector2 origin)
+    {
+      GridOrigin = origin;
+      SpacingX = spacingX;
+      SpacingY = spacingY;
+
+      for (int r = 0; r < rows; r++)
+      for (int c = 0; c < cols; c++)
+        CreateEnemy(origin + new Vector2(c * spacingX, -r * spacingY), c, r);
     }
   }
 }

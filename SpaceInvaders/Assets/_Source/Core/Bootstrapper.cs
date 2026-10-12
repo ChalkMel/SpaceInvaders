@@ -52,9 +52,9 @@ namespace Core
 
         private void SetupEnemies()
         {
+            enemyFactory.CreateGrid(rows, cols, spacingX, spacingY, origin);
             enemyStepper.Initialize(enemyFactory, coroutineRunner);
             enemyShooting.Initialize(enemyFactory, coroutineRunner);
-            enemyFactory.CreateGrid(rows, cols, spacingX, spacingY, origin);
         }
 
         private void SetupInput()
