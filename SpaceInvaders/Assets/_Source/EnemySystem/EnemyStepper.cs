@@ -60,7 +60,7 @@ namespace EnemySystem
 
     private void OnDestroy()
     {
-      if (_stepperCoroutine != null)
+      if (_stepperCoroutine != null && _runner != null)
         _runner?.StopCoroutine(_stepperCoroutine);
     }
   }

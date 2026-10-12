@@ -15,9 +15,13 @@ namespace Core
         [Header("Enemies")]
         [SerializeField] private EnemyFactory enemyFactory;
         [SerializeField] private EnemyStepper enemyStepper;
-        [SerializeField] private float enemyOffset;
-        [SerializeField] private int enemyCount;
-        
+        [SerializeField] private EnemyShootingController enemyShooting;
+        [SerializeField] private int rows;
+        [SerializeField] private int cols;
+        [SerializeField] private float spacingX;
+        [SerializeField] private float spacingY;
+        [SerializeField] private Vector2 origin;
+
         [Header("Score")]
         [SerializeField] private ScoreService scoreService;
         [SerializeField] private ScoreView scoreView;
@@ -49,9 +53,8 @@ namespace Core
         private void SetupEnemies()
         {
             enemyStepper.Initialize(enemyFactory, coroutineRunner);
-            
-            for (int i = 0; i < enemyCount; i++)
-                enemyFactory.CreateEnemy(new Vector2(i - 2, 3)); //TODO
+            enemyShooting.Initialize(enemyFactory, coroutineRunner);
+            enemyFactory.CreateGrid(rows, cols, spacingX, spacingY, origin);
         }
 
         private void SetupInput()
@@ -62,7 +65,7 @@ namespace Core
 
         private void SetupGameManager()
         {
-            
+            gameManager.Initialize(scoreService);
         }
 
         private void OnDestroy()

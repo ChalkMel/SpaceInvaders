@@ -57,18 +57,18 @@ namespace Core
     {
       if (!IsGameActive) return;
       IsGameActive = false;
-      winPanel?.SetActive(true);
+      winPanel.SetActive(true);
       winText.text = $"You won! Your score is {_scoreService.Score}\nYou can try again with pressing R";
-      Time.timeScale = 0f;
+      //Time.timeScale = 0f;
     }
 
     public void TriggerLose()
     {
       if (!IsGameActive) return;
       IsGameActive = false;
-      losePanel?.SetActive(true);
+      losePanel.SetActive(true);
       loseText.text = $"You lost! Your score is {_scoreService.Score}\nYou can try again with pressing R";
-      Time.timeScale = 0f;
+      //Time.timeScale = 0f;
     }
 
     public void Restart() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
